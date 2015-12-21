@@ -17,6 +17,11 @@ To install Node.js on Pi 2 - and other Arm7 processor based boards, run the foll
     sudo apt-get install -y build-essential python-dev python-rpi.gpio nodejs
     sudo npm install -g --unsafe-perm  node-red
 
+Node-RED install location:
+
+    /usr/lib/node_modules/node-red/
+
+
 ## Start node Red at boot:
 
 http://nodered.org/docs/hardware/raspberrypi.html#making-node-red-autostart-on-boot
