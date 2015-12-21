@@ -47,19 +47,13 @@ Add line
   
     Environment="NODE_RED_OPTIONS=--userDir /home/pi/data/node-red"
     sudo systemctl daemon-reload
+
+
+## Install emoncms flow
     
-## Make authentication work on read-only (12.4 +)
-https://groups.google.com/forum/#!topic/node-red/qC0PC0yTpLk
-
-    sudo nano ~/.node-red/settings.js
-
-Add line:
-
-    readOnly: true
-
-in module.exports. 
-
- The storage plugin won't do anything that writes to disk - the operations will silently fail, so the runtime will continue as normal, but nothing will be saved.
+    $ cd ~/data/node-red
+    $ npm install node-red-node-emoncms
+    
  
 ## Add authentication security for flow editor
 
@@ -72,10 +66,19 @@ copy adminAuth security section and generate password hash
     node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 8));"  your-password
 
 if required: $ sudo npm install bcryptjs
+    
+    
+## Make authentication work with read-only file system (NOT USED)
+ONLY NEEDED IF NOT MOVING USER FOLDER TO RW PARTITION 
+https://groups.google.com/forum/#!topic/node-red/qC0PC0yTpLk
 
-## Install emoncms flow
-    
-    $ cd ~/data/node-red
-    $ npm install node-red-node-emoncms
-    
-    
+    sudo nano ~/.node-red/settings.js
+
+Add line:
+
+    readOnly: true
+
+in module.exports. 
+
+ The storage plugin won't do anything that writes to disk - the operations will silently fail, so the runtime will continue as normal, but nothing will be saved.
+
