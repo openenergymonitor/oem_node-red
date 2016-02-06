@@ -2,29 +2,19 @@
 
 Default Node-RED config for emonPi
 
-# Install using NPM 
-We might switch to using Deb PPA in the future but for now we need latest version (12.4) from NPM
+# Install
+
+Assuming running Raspbian Jessie
 
 http://nodered.org/docs/hardware/raspberrypi.html
 
 At time of writing: 
 
-    sudo apt-get remove nodered
-    
-To install Node.js on Pi 2 - and other Arm7 processor based boards, run the following commands:
-
-    curl -sL https://deb.nodesource.com/setup_4.x | sudo bash -
-    sudo apt-get install -y build-essential python-dev python-rpi.gpio nodejs
-    sudo npm install -g --unsafe-perm  node-red
-
-Node-RED install location:
-
-    /usr/lib/node_modules/node-red/
-
+    sudo apt-get install nodered
 
 ## Start node Red at boot:
 
-http://nodered.org/docs/hardware/raspberrypi.html#making-node-red-autostart-on-boot
+    sudo systemctl enable nodered.service
 
 ## View node Red log 
 (now in /var/syslog) filter with
@@ -43,14 +33,16 @@ Start at boot using custom user data location
 
     sudo nano /lib/systemd/system/nodered.service
 
-Add line
+Add line to the `[service]` section
   
     Environment="NODE_RED_OPTIONS=--userDir /home/pi/data/node-red"
     sudo systemctl daemon-reload
+    sudo service nodered restart
 
 
 ## Install emoncms flow
     
+    $ sudo apt-get install npm
     $ cd ~/data/node-red
     $ npm install node-red-node-emoncms
     
@@ -81,4 +73,6 @@ Add line:
 in module.exports. 
 
  The storage plugin won't do anything that writes to disk - the operations will silently fail, so the runtime will continue as normal, but nothing will be saved.
+ 
+ *For future ref Node-RED install location: `/usr/lib/node_modules/node-red/`*
 
