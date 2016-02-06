@@ -2,6 +2,8 @@
 
 Default Node-RED config for emonPi
 
+![emonPi node-RED Flow](emonpi_flow.png)
+
 # Install
 
 http://nodered.org/docs/hardware/raspberrypi.html
@@ -14,7 +16,7 @@ At time of writing (Assuming running Raspbian Jessie):
 
     sudo systemctl enable nodered.service
 
-## View node Red log 
+## View node Red log
 (now in /var/syslog) filter with
 
     $ sudo journalctl -f -u nodered -o cat
@@ -27,7 +29,7 @@ Test with:
 
     node-red-pi --max-old-space-size=128  --userDir /home/pi/data/node-red
 
-Start at boot using custom user data location 
+Start at boot using custom user data location
 
     sudo nano /lib/systemd/system/nodered.service
 
@@ -63,7 +65,7 @@ Uncomment adminAuth security section and insert username and password hash
 *[Default settings file example](https://github.com/node-red/node-red/blob/master/settings.js)*
     
 ## Make authentication work with read-only file system (NOT USED)
-ONLY NEEDED IF NOT MOVING USER FOLDER TO RW PARTITION 
+ONLY NEEDED IF NOT MOVING USER FOLDER TO RW PARTITION
 https://groups.google.com/forum/#!topic/node-red/qC0PC0yTpLk
 
     sudo nano ~/.node-red/settings.js
@@ -72,7 +74,7 @@ Add line:
 
     readOnly: true
 
-in module.exports. 
+in module.exports.
 
  The storage plugin won't do anything that writes to disk - the operations will silently fail, so the runtime will continue as normal, but nothing will be saved.
  
