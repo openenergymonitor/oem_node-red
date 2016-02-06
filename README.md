@@ -4,11 +4,9 @@ Default Node-RED config for emonPi
 
 # Install
 
-Assuming running Raspbian Jessie
-
 http://nodered.org/docs/hardware/raspberrypi.html
 
-At time of writing: 
+At time of writing (Assuming running Raspbian Jessie):
 
     sudo apt-get install nodered
 
@@ -49,16 +47,20 @@ Add line to the `[service]` section
  
 ## Add authentication security for flow editor
 
+### Generate password hash
+    
+    $ node-red-admin hash-pw
+    
+If required `$ sudo npm install bcryptjs`
+*Alternate method `node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 8));"  your-password`*
+
+Copy generated password hash
+
     sudo nano /home/pi/data/node-red/settings.js
 
-Default settings file example: https://github.com/node-red/node-red/blob/master/settings.js
+Uncomment adminAuth security section and insert username and password hash
 
-copy adminAuth security section and generate password hash
-
-    node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 8));"  your-password
-
-if required: $ sudo npm install bcryptjs
-    
+*[Default settings file example](https://github.com/node-red/node-red/blob/master/settings.js)*
     
 ## Make authentication work with read-only file system (NOT USED)
 ONLY NEEDED IF NOT MOVING USER FOLDER TO RW PARTITION 
