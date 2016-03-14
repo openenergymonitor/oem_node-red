@@ -36,6 +36,9 @@ Start at boot using custom user data location
 Add line to the `[service]` section
   
     Environment="NODE_RED_OPTIONS=--userDir /home/pi/data/node-red"
+    
+Save an exit nano then run:
+
     sudo systemctl daemon-reload
     sudo service nodered restart
 
