@@ -29,17 +29,23 @@ Test with:
 
     node-red-pi --max-old-space-size=128  --userDir /home/pi/data/node-red
 
-Start at boot using custom user data location
+Create symlink to /home/pi/data/node-red from standard location /home/pi/node-red
 
-    sudo nano /lib/systemd/system/nodered.service
+    sudo ln -s /home/pi/data/node-red /home/pi/node-red
 
-Add line to the `[service]` section
+Note: creating symlink to ~/data from default data folder location is better then setting custom data folder location in nodered service since symlink method will survice a node-RED update cycle.
+
+~~Start at boot using custom user data location~~
+
+~~sudo nano /lib/systemd/system/nodered.service~~
+
+~~Add line to the `[service]` section~~
   
-    Environment="NODE_RED_OPTIONS=--userDir /home/pi/data/node-red"
+~~Environment="NODE_RED_OPTIONS=--userDir /home/pi/data/node-red"~~
     
 Save an exit nano then run:
 
-    sudo systemctl daemon-reload
+~~sudo systemctl daemon-reload~~
     sudo service nodered restart
 
 
