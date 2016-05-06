@@ -23,7 +23,7 @@ At time of writing (Assuming running Raspbian Jessie):
 
 ## Move user data partition to RW ~/data partition on emonPi
 
-    mv ~/.node-red ~/data/node-red
+    mv /home/pi/.node-red ~/data/node-red
 
 Test with:
 
@@ -31,7 +31,7 @@ Test with:
 
 Create symlink to /home/pi/data/node-red from standard location /home/pi/node-red
 
-    sudo ln -s /home/pi/data/node-red /home/pi/node-red
+    sudo ln -s /home/pi/data/node-red /home/pi/.node-red
 
 Note: creating symlink to ~/data from default data folder location is better then setting custom data folder location in nodered service since symlink method will survice a node-RED update cycle.
 
