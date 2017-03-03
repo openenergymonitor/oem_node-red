@@ -35,7 +35,7 @@ OpenEVSE RAPI options:
 - MQTT (emonESP WiFi 2.0)
 - HTTP (emonESP WiFi 1.0 / 2.0)
 
-![](openevse-solarpv-didert.png)
+![](openevse-solarpv-divert.png)
 
 ***
 
