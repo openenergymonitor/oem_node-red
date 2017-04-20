@@ -1,0 +1,128 @@
+[
+  {
+    "id": "d563b49a.c4c468",
+    "type": "mqtt in",
+    "z": "a5ce04b2.5a31f8",
+    "name": "emon\/*",
+    "topic": "emon\/*",
+    "qos": "2",
+    "broker": "8a9d92d6.75627",
+    "x": 303,
+    "y": 214,
+    "wires": [
+      [
+        "16ce9d9.ce0e462"
+      ]
+    ]
+  },
+  {
+    "id": "16ce9d9.ce0e462",
+    "type": "function",
+    "z": "a5ce04b2.5a31f8",
+    "name": "NodeName from MQTT sub-topic",
+    "func": "var topic = msg.topic\nvar arr = topic.split(\"\/\");\nvar length = arr.length;\nmsg.nodegroup = arr[length-1];\n\n\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "x": 483.5,
+    "y": 141,
+    "wires": [
+      [
+        "74fd9bd2.324904",
+        "708d12bf.e28b5c",
+        "8606ae02.b2343"
+      ]
+    ]
+  },
+  {
+    "id": "d996313f.25e46",
+    "type": "emoncms",
+    "z": "a5ce04b2.5a31f8",
+    "name": "Emoncms",
+    "emonServer": "c886642.3078498",
+    "nodegroup": "",
+    "x": 819,
+    "y": 137,
+    "wires": [
+      
+    ]
+  },
+  {
+    "id": "74fd9bd2.324904",
+    "type": "debug",
+    "z": "a5ce04b2.5a31f8",
+    "name": "",
+    "active": true,
+    "console": "false",
+    "complete": "nodegroup",
+    "x": 665.5,
+    "y": 328,
+    "wires": [
+      
+    ]
+  },
+  {
+    "id": "8606ae02.b2343",
+    "type": "delay",
+    "z": "a5ce04b2.5a31f8",
+    "name": "",
+    "pauseType": "rate",
+    "timeout": "5",
+    "timeoutUnits": "seconds",
+    "rate": "1",
+    "nbRateUnits": "10",
+    "rateUnits": "second",
+    "randomFirst": "1",
+    "randomLast": "5",
+    "randomUnits": "seconds",
+    "drop": false,
+    "x": 727,
+    "y": 222,
+    "wires": [
+      [
+        "d996313f.25e46"
+      ]
+    ]
+  },
+  {
+    "id": "708d12bf.e28b5c",
+    "type": "debug",
+    "z": "a5ce04b2.5a31f8",
+    "name": "",
+    "active": true,
+    "console": "false",
+    "complete": "false",
+    "x": 680,
+    "y": 286,
+    "wires": [
+      
+    ]
+  },
+  {
+    "id": "8a9d92d6.75627",
+    "type": "mqtt-broker",
+    "z": "a5ce04b2.5a31f8",
+    "broker": "localhost",
+    "port": "1883",
+    "clientid": "",
+    "usetls": false,
+    "verifyservercert": true,
+    "compatmode": true,
+    "keepalive": "15",
+    "cleansession": true,
+    "willTopic": "",
+    "willQos": "0",
+    "willRetain": null,
+    "willPayload": "",
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthRetain": null,
+    "birthPayload": ""
+  },
+  {
+    "id": "c886642.3078498",
+    "type": "emoncms-server",
+    "z": "",
+    "server": "https:\/\/emoncms.org",
+    "name": ""
+  }
+]
