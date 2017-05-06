@@ -1,1 +1,407 @@
-[{"id":"a5ce04b2.5a31f8","type":"tab","label":"emonPi"},{"id":"552554ba.74c5fc","type":"tab","label":"weather"},{"id":"692269ce.5fa048","type":"subflow","name":"timestamp v2","info":"Input:\n- \"msg.payload\" is input string to be stored in\nlog file.\n- log file stored per msg.filename\n\n\nOutput:\n- timestamp and inputstring stored in logfile\n- ","in":[{"x":60,"y":160,"wires":[{"id":"97a2990d.22da68"}]}],"out":[{"x":600,"y":200,"wires":[{"id":"b771ec96.c2dec","port":0}]}]},{"id":"8a9d92d6.75627","type":"mqtt-broker","z":"a5ce04b2.5a31f8","broker":"localhost","port":"1883","clientid":"","usetls":false,"verifyservercert":true,"compatmode":true,"keepalive":"15","cleansession":true,"willTopic":"","willQos":"0","willRetain":null,"willPayload":"","birthTopic":"","birthQos":"0","birthRetain":null,"birthPayload":""},{"id":"396670b0.0ef31","type":"mqtt-broker","z":"","broker":"localhost","port":"1883","clientid":"","usetls":false,"verifyservercert":true,"compatmode":true,"keepalive":"15","cleansession":true,"willTopic":"","willQos":"0","willRetain":"false","willPayload":"","birthTopic":"","birthQos":"0","birthRetain":"false","birthPayload":""},{"id":"80852ef.fc44ad","type":"emoncms-server","z":"552554ba.74c5fc","server":"http://192.168.0.35/emoncms","name":"emonpi"},{"id":"8d9bb244.7ccb2","type":"mqtt-broker","z":"","broker":"192.168.0.35","port":"1883","clientid":"","usetls":false,"verifyservercert":true,"compatmode":true,"keepalive":"15","cleansession":true,"willTopic":"","willQos":"0","willRetain":null,"willPayload":"","birthTopic":"","birthQos":"0","birthRetain":null,"birthPayload":""},{"id":"d580a1ae.2a7f6","type":"mqtt in","z":"a5ce04b2.5a31f8","name":"emon/#","topic":"emon/#","broker":"8a9d92d6.75627","x":375,"y":215,"wires":[["a697650a.596898"]]},{"id":"a697650a.596898","type":"debug","z":"a5ce04b2.5a31f8","name":"View all 'emon/#' MQTT traffic","active":false,"console":"false","complete":"payload","x":609,"y":212,"wires":[]},{"id":"3c36e1ef.c3c91e","type":"mqtt in","z":"a5ce04b2.5a31f8","name":"emon/emonth5/battery","topic":"emon/emonth5/battery","broker":"8a9d92d6.75627","x":369,"y":396,"wires":[["1ca466f2.e35b99"]]},{"id":"42a47644.bd5b88","type":"mqtt in","z":"a5ce04b2.5a31f8","name":"emon/emonth1/battery","topic":"emon/emonth1/battery","broker":"8a9d92d6.75627","x":326,"y":339,"wires":[["1ca466f2.e35b99"]]},{"id":"1ca466f2.e35b99","type":"function","z":"a5ce04b2.5a31f8","name":"If emonTH battery < 1.7V","func":"if (msg.payload < 1.7) {\n   return {payload:'WARNING: emonTH battery low  '+msg.payload+'V'  };\n}\nreturn msg;","outputs":1,"noerr":0,"x":624,"y":287,"wires":[["2c16c174.d3e93e"]]},{"id":"619b55e7.9e64ac","type":"e-mail","z":"a5ce04b2.5a31f8","server":"smtp.gmail.com","port":"465","name":"","dname":"Send email notification [ENTER YOUR SMTP CONFIG]","x":994,"y":316,"wires":[]},{"id":"2c16c174.d3e93e","type":"delay","z":"a5ce04b2.5a31f8","name":"Limit to one email per day","pauseType":"rate","timeout":"5","timeoutUnits":"seconds","rate":"2","rateUnits":"day","randomFirst":"1","randomLast":"5","randomUnits":"seconds","drop":true,"x":669,"y":382,"wires":[["619b55e7.9e64ac"]]},{"id":"6ab7a826.954858","type":"mqtt in","z":"a5ce04b2.5a31f8","name":"emon/emonpi/power1","topic":"emon/emonpi/power1","broker":"8a9d92d6.75627","x":376,"y":490,"wires":[["d3fa2502.2c05d8"]]},{"id":"d3fa2502.2c05d8","type":"debug","z":"a5ce04b2.5a31f8","name":"View emonPi power output","active":false,"console":"false","complete":"payload","x":665,"y":490,"wires":[]},{"id":"b771ec96.c2dec","type":"function","z":"692269ce.5fa048","name":"add timestamp v2","func":"var now = new Date();\nif (msg.filename === undefined) {\n        msg.filename = \"/home/pi/data/undefined.log\";\n    }\nmsg.payload = now.toString() + \"\\t\" + now.valueOf() + \"\\t\" + msg.payload;\nreturn msg;","outputs":"1","noerr":0,"x":430,"y":160,"wires":[["7aed6d7.ab18594"]]},{"id":"7aed6d7.ab18594","type":"file","z":"692269ce.5fa048","name":"","filename":"","appendNewline":true,"createDir":true,"overwriteFile":"false","x":630,"y":140,"wires":[]},{"id":"97a2990d.22da68","type":"switch","z":"692269ce.5fa048","name":"Drop \"Null\"","property":"payload","propertyType":"msg","rules":[{"t":"nnull"},{"t":"null"}],"checkall":"false","outputs":2,"x":210,"y":160,"wires":[["b771ec96.c2dec"],[]]},{"id":"8401b9fc.e8af98","type":"inject","z":"552554ba.74c5fc","name":"Poke every 30min","topic":"","payload":"","payloadType":"str","repeat":"1800","crontab":"","once":true,"x":427,"y":447.3333740234375,"wires":[["e6315c7a.2f9cf"]]},{"id":"32c3406d.3a05d","type":"mqtt out","z":"552554ba.74c5fc","name":"MQTT:emon/weather/temp","topic":"emon/weather/temp","qos":"","retain":"","broker":"396670b0.0ef31","x":993.6666870117188,"y":310,"wires":[]},{"id":"22fc5f10.321e8","type":"debug","z":"552554ba.74c5fc","name":"","active":true,"console":"false","complete":"payload","x":905.6666870117188,"y":226,"wires":[]},{"id":"9130d040.22a15","type":"debug","z":"552554ba.74c5fc","name":"View full output","active":true,"console":"false","complete":"payload","x":715,"y":420.3333740234375,"wires":[]},{"id":"907229c3.f65008","type":"function","z":"552554ba.74c5fc","name":"Return temp deg C","func":"context.global.outdoor_temp = msg.payload.tempc;  \nreturn {payload:context.global.outdoor_temp};","outputs":1,"noerr":0,"x":667,"y":285.3333435058594,"wires":[["32c3406d.3a05d","22fc5f10.321e8"]]},{"id":"e6315c7a.2f9cf","type":"wunderground","z":"552554ba.74c5fc","name":"","lon":"-4.1716485","lat":"41.1429426","city":"","country":"","x":454.66668701171875,"y":360,"wires":[["9130d040.22a15","907229c3.f65008"]]}]
+[
+  {
+    "id": "a5ce04b2.5a31f8",
+    "type": "tab",
+    "label": "emonPi"
+  },
+  {
+    "id": "552554ba.74c5fc",
+    "type": "tab",
+    "label": "weather"
+  },
+  {
+    "id": "692269ce.5fa048",
+    "type": "subflow",
+    "name": "timestamp v2",
+    "info": "Input:\n- \"msg.payload\" is input string to be stored in\nlog file.\n- log file stored per msg.filename\n\n\nOutput:\n- timestamp and inputstring stored in logfile\n- ",
+    "in": [
+      {
+        "x": 60,
+        "y": 160,
+        "wires": [
+          {
+            "id": "97a2990d.22da68"
+          }
+        ]
+      }
+    ],
+    "out": [
+      {
+        "x": 600,
+        "y": 200,
+        "wires": [
+          {
+            "id": "b771ec96.c2dec",
+            "port": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "8a9d92d6.75627",
+    "type": "mqtt-broker",
+    "z": "a5ce04b2.5a31f8",
+    "broker": "localhost",
+    "port": "1883",
+    "clientid": "",
+    "usetls": false,
+    "verifyservercert": true,
+    "compatmode": true,
+    "keepalive": "15",
+    "cleansession": true,
+    "willTopic": "",
+    "willQos": "0",
+    "willRetain": null,
+    "willPayload": "",
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthRetain": null,
+    "birthPayload": ""
+  },
+  {
+    "id": "396670b0.0ef31",
+    "type": "mqtt-broker",
+    "z": "",
+    "broker": "localhost",
+    "port": "1883",
+    "clientid": "",
+    "usetls": false,
+    "verifyservercert": true,
+    "compatmode": true,
+    "keepalive": "15",
+    "cleansession": true,
+    "willTopic": "",
+    "willQos": "0",
+    "willRetain": "false",
+    "willPayload": "",
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthRetain": "false",
+    "birthPayload": ""
+  },
+  {
+    "id": "80852ef.fc44ad",
+    "type": "emoncms-server",
+    "z": "552554ba.74c5fc",
+    "server": "http:\/\/192.168.0.35\/emoncms",
+    "name": "emonpi"
+  },
+  {
+    "id": "8d9bb244.7ccb2",
+    "type": "mqtt-broker",
+    "z": "",
+    "broker": "192.168.0.35",
+    "port": "1883",
+    "clientid": "",
+    "usetls": false,
+    "verifyservercert": true,
+    "compatmode": true,
+    "keepalive": "15",
+    "cleansession": true,
+    "willTopic": "",
+    "willQos": "0",
+    "willRetain": null,
+    "willPayload": "",
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthRetain": null,
+    "birthPayload": ""
+  },
+  {
+    "id": "d580a1ae.2a7f6",
+    "type": "mqtt in",
+    "z": "a5ce04b2.5a31f8",
+    "name": "emon\/#",
+    "topic": "emon\/#",
+    "broker": "8a9d92d6.75627",
+    "x": 375,
+    "y": 215,
+    "wires": [
+      [
+        "a697650a.596898"
+      ]
+    ]
+  },
+  {
+    "id": "a697650a.596898",
+    "type": "debug",
+    "z": "a5ce04b2.5a31f8",
+    "name": "View all 'emon\/#' MQTT traffic",
+    "active": false,
+    "console": "false",
+    "complete": "payload",
+    "x": 609,
+    "y": 212,
+    "wires": [
+      
+    ]
+  },
+  {
+    "id": "3c36e1ef.c3c91e",
+    "type": "mqtt in",
+    "z": "a5ce04b2.5a31f8",
+    "name": "emon\/emonth5\/battery",
+    "topic": "emon\/emonth5\/battery",
+    "broker": "8a9d92d6.75627",
+    "x": 369,
+    "y": 396,
+    "wires": [
+      [
+        "1ca466f2.e35b99"
+      ]
+    ]
+  },
+  {
+    "id": "42a47644.bd5b88",
+    "type": "mqtt in",
+    "z": "a5ce04b2.5a31f8",
+    "name": "emon\/emonth1\/battery",
+    "topic": "emon\/emonth1\/battery",
+    "broker": "8a9d92d6.75627",
+    "x": 326,
+    "y": 339,
+    "wires": [
+      [
+        "1ca466f2.e35b99"
+      ]
+    ]
+  },
+  {
+    "id": "1ca466f2.e35b99",
+    "type": "function",
+    "z": "a5ce04b2.5a31f8",
+    "name": "If emonTH battery < 1.7V",
+    "func": "if (msg.payload < 1.7) {\n   return {payload:'WARNING: emonTH battery low  '+msg.payload+'V'  };\n}\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "x": 624,
+    "y": 287,
+    "wires": [
+      [
+        "2c16c174.d3e93e"
+      ]
+    ]
+  },
+  {
+    "id": "619b55e7.9e64ac",
+    "type": "e-mail",
+    "z": "a5ce04b2.5a31f8",
+    "server": "smtp.gmail.com",
+    "port": "465",
+    "name": "",
+    "dname": "Send email notification [ENTER YOUR SMTP CONFIG]",
+    "x": 994,
+    "y": 316,
+    "wires": [
+      
+    ]
+  },
+  {
+    "id": "2c16c174.d3e93e",
+    "type": "delay",
+    "z": "a5ce04b2.5a31f8",
+    "name": "Limit to one email per day",
+    "pauseType": "rate",
+    "timeout": "5",
+    "timeoutUnits": "seconds",
+    "rate": "2",
+    "rateUnits": "day",
+    "randomFirst": "1",
+    "randomLast": "5",
+    "randomUnits": "seconds",
+    "drop": true,
+    "x": 669,
+    "y": 382,
+    "wires": [
+      [
+        "619b55e7.9e64ac"
+      ]
+    ]
+  },
+  {
+    "id": "6ab7a826.954858",
+    "type": "mqtt in",
+    "z": "a5ce04b2.5a31f8",
+    "name": "emon\/emonpi\/power1",
+    "topic": "emon\/emonpi\/power1",
+    "broker": "8a9d92d6.75627",
+    "x": 376,
+    "y": 490,
+    "wires": [
+      [
+        "d3fa2502.2c05d8"
+      ]
+    ]
+  },
+  {
+    "id": "d3fa2502.2c05d8",
+    "type": "debug",
+    "z": "a5ce04b2.5a31f8",
+    "name": "View emonPi power output",
+    "active": false,
+    "console": "false",
+    "complete": "payload",
+    "x": 665,
+    "y": 490,
+    "wires": [
+      
+    ]
+  },
+  {
+    "id": "b771ec96.c2dec",
+    "type": "function",
+    "z": "692269ce.5fa048",
+    "name": "add timestamp v2",
+    "func": "var now = new Date();\nif (msg.filename === undefined) {\n        msg.filename = \"\/home\/pi\/data\/undefined.log\";\n    }\nmsg.payload = now.toString() + \"\\t\" + now.valueOf() + \"\\t\" + msg.payload;\nreturn msg;",
+    "outputs": "1",
+    "noerr": 0,
+    "x": 430,
+    "y": 160,
+    "wires": [
+      [
+        "7aed6d7.ab18594"
+      ]
+    ]
+  },
+  {
+    "id": "7aed6d7.ab18594",
+    "type": "file",
+    "z": "692269ce.5fa048",
+    "name": "",
+    "filename": "",
+    "appendNewline": true,
+    "createDir": true,
+    "overwriteFile": "false",
+    "x": 630,
+    "y": 140,
+    "wires": [
+      
+    ]
+  },
+  {
+    "id": "97a2990d.22da68",
+    "type": "switch",
+    "z": "692269ce.5fa048",
+    "name": "Drop \"Null\"",
+    "property": "payload",
+    "propertyType": "msg",
+    "rules": [
+      {
+        "t": "nnull"
+      },
+      {
+        "t": "null"
+      }
+    ],
+    "checkall": "false",
+    "outputs": 2,
+    "x": 210,
+    "y": 160,
+    "wires": [
+      [
+        "b771ec96.c2dec"
+      ],
+      [
+        
+      ]
+    ]
+  },
+  {
+    "id": "8401b9fc.e8af98",
+    "type": "inject",
+    "z": "552554ba.74c5fc",
+    "name": "Poke every 30min",
+    "topic": "",
+    "payload": "",
+    "payloadType": "str",
+    "repeat": "1800",
+    "crontab": "",
+    "once": true,
+    "x": 427,
+    "y": 447.33337402344,
+    "wires": [
+      [
+        "e6315c7a.2f9cf"
+      ]
+    ]
+  },
+  {
+    "id": "32c3406d.3a05d",
+    "type": "mqtt out",
+    "z": "552554ba.74c5fc",
+    "name": "MQTT:emon\/weather\/temp",
+    "topic": "emon\/weather\/temp",
+    "qos": "",
+    "retain": "",
+    "broker": "396670b0.0ef31",
+    "x": 993.66668701172,
+    "y": 310,
+    "wires": [
+      
+    ]
+  },
+  {
+    "id": "22fc5f10.321e8",
+    "type": "debug",
+    "z": "552554ba.74c5fc",
+    "name": "",
+    "active": true,
+    "console": "false",
+    "complete": "payload",
+    "x": 905.66668701172,
+    "y": 226,
+    "wires": [
+      
+    ]
+  },
+  {
+    "id": "9130d040.22a15",
+    "type": "debug",
+    "z": "552554ba.74c5fc",
+    "name": "View full output",
+    "active": true,
+    "console": "false",
+    "complete": "payload",
+    "x": 715,
+    "y": 420.33337402344,
+    "wires": [
+      
+    ]
+  },
+  {
+    "id": "907229c3.f65008",
+    "type": "function",
+    "z": "552554ba.74c5fc",
+    "name": "Return temp deg C",
+    "func": "context.global.outdoor_temp = msg.payload.tempc;  \nreturn {payload:context.global.outdoor_temp};",
+    "outputs": 1,
+    "noerr": 0,
+    "x": 667,
+    "y": 285.33334350586,
+    "wires": [
+      [
+        "32c3406d.3a05d",
+        "22fc5f10.321e8"
+      ]
+    ]
+  },
+  {
+    "id": "e6315c7a.2f9cf",
+    "type": "wunderground",
+    "z": "552554ba.74c5fc",
+    "name": "",
+    "lon": "-4.1716485",
+    "lat": "41.1429426",
+    "city": "",
+    "country": "",
+    "x": 454.66668701172,
+    "y": 360,
+    "wires": [
+      [
+        "9130d040.22a15",
+        "907229c3.f65008"
+      ]
+    ]
+  }
+]
