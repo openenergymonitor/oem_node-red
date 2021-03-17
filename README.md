@@ -1,5 +1,7 @@
 # OpenEnergyMonitor emonPi NodeRED Setup
 
+**Archive Documentation: The instructions on the page are outdated and may not be relevant, please follow latest [NodeRED installation guide](https://nodered.org/docs/getting-started/raspberrypi)**
+
 Default Node-RED config for emonPi
 
 ## [User Guide](https://guide.openenergymonitor.org/integrations/nodered)
